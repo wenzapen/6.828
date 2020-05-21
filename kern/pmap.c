@@ -95,6 +95,7 @@ boot_alloc(uint32_t n)
 	if (!nextfree) {
 		extern char end[];
 		nextfree = ROUNDUP((char *) end, PGSIZE);
+		cprintf("Initial nextfree: %x\n", (uint32_t)nextfree);
 	}
 
 	// Allocate a chunk large enough to hold 'n' bytes, then update
@@ -106,6 +107,7 @@ boot_alloc(uint32_t n)
 		return nextfree;
 	result = nextfree;
 	nextfree = ROUNDUP(nextfree+n, PGSIZE);
+	cprintf("allocated va: %x nextfree: %x\n", (uint32_t)result, (uint32_t)nextfree);
 	if(((uint32_t)nextfree-KERNBASE)>0x400000)
 		panic("Out of memory");
 	return result;
@@ -263,17 +265,32 @@ page_init(void)
 	// free pages!
 	size_t i;
 	size_t spages = npages * sizeof(struct PageInfo); 
+	cprintf("nPages is :%d \n", npages);
+	cprintf("sPages is :%d: %x(Hex) BYTE\n", spages, spages);
+	cprintf("va of pages is : %x pa of pages is :%x \n",pages, PADDR(pages));
+	cprintf("end physaddr of pages is :%d \n", (ROUNDUP(PADDR(pages)+spages, PGSIZE))/PGSIZE);
 	for (i = 0; i < npages; i++) {
 		if(i==0) 
 			continue;
 		if(i>=(IOPHYSMEM/PGSIZE) && i<(ROUNDUP(EXTPHYSMEM, PGSIZE)/PGSIZE))
 			continue;
-		if(i>=npages_basemem && i<ROUNDUP(PADDR(pages)+spages, PGSIZE))
+		if(i>=npages_basemem && i<ROUNDUP(PADDR(pages)+spages, PGSIZE)/PGSIZE) {
+//			cprintf("page :%d for kernel/pgdir/pages\n", i);
 			continue;
+		}
 		pages[i].pp_ref = 0;
 		pages[i].pp_link = page_free_list;
 		page_free_list = &pages[i];
+//		cprintf("Add page :%d in free list\n", i);
 	}
+	cprintf("Finished adding pages to free list\n");
+/*	struct PageInfo *p = page_free_list;
+	while(p) {
+		cprintf("Page :%d is free\n", p-pages);
+		p = p->pp_link;
+	}
+*/
+
 }
 
 //
@@ -549,9 +566,11 @@ check_page_free_list(bool only_low_memory)
 
 	// if there's a page that shouldn't be on the free list,
 	// try to make sure it eventually causes trouble.
-	for (pp = page_free_list; pp; pp = pp->pp_link)
+	for (pp = page_free_list; pp; pp = pp->pp_link) {
+	//	cprintf("Page :%d is free for check\n", pp-pages);
 		if (PDX(page2pa(pp)) < pdx_limit)
 			memset(page2kva(pp), 0x97, 128);
+	}
 
 	first_free_page = (char *) boot_alloc(0);
 	for (pp = page_free_list; pp; pp = pp->pp_link) {
