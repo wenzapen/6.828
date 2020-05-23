@@ -1,0 +1,98 @@
+wenzapen@ubuntu:~/6.828/lab$ make qemu
++ cc kern/pmap.c
++ ld obj/kern/kernel
+i686-elf-ld: warning: section `.bss' type changed to PROGBITS
++ mk obj/kern/kernel.img
+qemu-system-i386 -drive file=obj/kern/kernel.img,index=0,media=disk,format=raw -serial mon:stdio -gdb tcp::26000 -D qemu.log 
+6828 decimal is 15254 octal!
+Physical memory: 131072K available, base = 640K, extended = 130432K
+Initial nextfree: f0119000
+allocated va: f0119000 nextfree: f011a000
+allocated va: f011a000 nextfree: f015a000
+nPages is :32768 
+sPages is :262144: 40000(Hex) BYTE
+va of pages is : f011a000 pa of pages is :11a000 
+end physaddr of pages is :346 
+Finished adding pages to free list
+after page init
+Checking page_free_list: 0 : 32767
+Checking page_free_list: 1 : 32766
+Checking page_free_list: 2 : 32765
+Checking page_free_list: 3 : 32764
+Checking page_free_list: 4 : 32763
+Checking page_free_list: 5 : 32762
+Checking page_free_list: 6 : 32761
+Checking page_free_list: 7 : 32760
+Checking page_free_list: 8 : 32759
+Checking page_free_list: 9 : 32758
+check_page_free_list() succeeded!
+after check page free list
+Checking page_free_list: 0 : 1023
+Checking page_free_list: 1 : 1022
+Checking page_free_list: 2 : 1021
+Checking page_free_list: 3 : 1020
+Checking page_free_list: 4 : 1019
+Checking page_free_list: 5 : 1018
+Checking page_free_list: 6 : 1017
+Checking page_free_list: 7 : 1016
+Checking page_free_list: 8 : 1015
+Checking page_free_list: 9 : 1014
+Number of free pages: 32581 first free page: 1023
+page alloc: check page_free_list:  1023  1022  1021  1020  1019  1018  1017  1016  1015 
+Allocated page: 1023 next free page: 1022
+page alloc: check page_free_list:  1022  1021  1020  1019  1018  1017  1016  1015  1014 
+Allocated page: 1022 next free page: 1021
+page alloc: check page_free_list:  1021  1020  1019  1018  1017  1016  1015  1014  1013 
+Allocated page: 1021 next free page: 1020
+check page_free_list:  33410048  -136214  33410048  -136214  33410048 
+Freeed page: 1023 Next free page : 1023
+check page_free_list:  1023  33410048  -136214  33410048  -136214 
+Before free:head page: 1023 pp page : 1022 next page : 33410048
+head page: 1023 pp page : 1022 next page : 33410048
+Freeed page: 1022 Next free page : 1023
+check page_free_list:  1023  1022  33410048  -136214  33410048 
+Before free:head page: 1022 pp page : 1021 next page : 33410048
+head page: 1022 pp page : 1021 next page : 33410048
+Freeed page: 1021 Next free page : 1023
+page alloc: check page_free_list:  1023  1022  1021  33410048  -136214  33410048  -136214  33410048  -136214 
+Allocated page: 1023 next free page: 1022
+page alloc: check page_free_list:  1022  1021  33410048  -136214  33410048  -136214  33410048  -136214  33410048 
+Allocated page: 1022 next free page: 1021
+page alloc: check page_free_list:  1021  33410048  -136214  33410048  -136214  33410048  -136214  33410048  -136214 
+Allocated page: 1021 next free page: 33410048
+check page_free_list:  33410048  -136214  33410048  -136214  33410048 
+Freeed page: 1023 Next free page : 1023
+page alloc: check page_free_list:  1023  33410048  -136214  33410048  -136214  33410048  -136214  33410048  -136214 
+Allocated page: 1023 next free page: 33410048
+check page_free_list:  1020  1019  1018  1017  1016 
+Freeed page: 1023 Next free page : 1023
+check page_free_list:  1023  1020  1019  1018  1017 
+Before free:head page: 1023 pp page : 1022 next page : 1020
+head page: 1023 pp page : 1022 next page : 1020
+Freeed page: 1022 Next free page : 1023
+check page_free_list:  1023  1022  1020  1019  1018 
+Before free:head page: 1022 pp page : 1021 next page : 1020
+head page: 1022 pp page : 1021 next page : 1020
+Freeed page: 1021 Next free page : 1023
+check_page_alloc() succeeded!
+after check page alloc
+Checking page_free_list: 0 : 1023
+Checking page_free_list: 1 : 1022
+Checking page_free_list: 2 : 1021
+Checking page_free_list: 3 : 1020
+Checking page_free_list: 4 : 1019
+Checking page_free_list: 5 : 1018
+Checking page_free_list: 6 : 1017
+Checking page_free_list: 7 : 1016
+Checking page_free_list: 8 : 1015
+Checking page_free_list: 9 : 1014
+page alloc: check page_free_list:  1023  1022  1021  1020  1019  1018  1017  1016  1015 
+Allocated page: 1023 next free page: 1022
+page alloc: check page_free_list:  1022  1021  1020  1019  1018  1017  1016  1015  1014 
+Allocated page: 1022 next free page: 1021
+page alloc: check page_free_list:  1021  1020  1019  1018  1017  1016  1015  1014  1013 
+Allocated page: 1021 next free page: 1020
+kernel panic at ./kern/pmap.h:82: KADDR called with invalid pa dcc00000
+Welcome to the JOS kernel monitor!
+Type 'help' for a list of commands.
+
