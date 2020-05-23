@@ -105,6 +105,7 @@ boot_alloc(uint32_t n)
 	if (!nextfree) {
 		extern char end[];
 		nextfree = ROUNDUP((char *) end, PGSIZE);
+		cprintf("Initial nextfree: %x\n", (uint32_t)nextfree);
 	}
 
 	// Allocate a chunk large enough to hold 'n' bytes, then update
@@ -116,6 +117,7 @@ boot_alloc(uint32_t n)
 		return nextfree;
 	result = nextfree;
 	nextfree = ROUNDUP(nextfree+n, PGSIZE);
+	cprintf("allocated va: %x nextfree: %x\n", (uint32_t)result, (uint32_t)nextfree);
 	if(((uint32_t)nextfree-KERNBASE)>0x400000)
 		panic("Out of memory");
 	return result;
@@ -273,6 +275,10 @@ page_init(void)
 	// free pages!
 	size_t i;
 	size_t spages = npages * sizeof(struct PageInfo); 
+	cprintf("nPages is :%d \n", npages);
+	cprintf("sPages is :%d: %x(Hex) BYTE\n", spages, spages);
+	cprintf("va of pages is : %x pa of pages is :%x \n",pages, PADDR(pages));
+	cprintf("end physaddr of pages is :%d \n", (ROUNDUP(PADDR(pages)+spages, PGSIZE))/PGSIZE);
 	for (i = 0; i < npages; i++) {
 		if(i==0) {
 			pages[i].pp_ref = 1;
@@ -287,6 +293,7 @@ page_init(void)
 		if(i>=npages_basemem && i<ROUNDUP(PADDR(pages)+spages, PGSIZE)/PGSIZE) {
 			pages[i].pp_ref = 1;
 			pages[i].pp_link = NULL;
+//			cprintf("page :%d for kernel/pgdir/pages\n", i);
 			continue;
 		}
 		pages[i].pp_ref = 0;
@@ -322,7 +329,7 @@ page_alloc(int alloc_flags)
 	// Fill this function in
 	struct PageInfo *_page;
 	if(!page_free_list) {
-//		cprintf("out of page\n");
+		cprintf("out of page\n");
 		return NULL;
 	}
 	_page = page_free_list;
@@ -330,7 +337,7 @@ page_alloc(int alloc_flags)
 	_page->pp_link = NULL;
 	if(alloc_flags & ALLOC_ZERO)
 		memset(page2kva(_page), 0, PGSIZE);
-//	cprintf("Allocated page id: %d \n", _page-pages);
+	cprintf("Allocated page id: %d \n", _page-pages);
 	return _page;
 }
 
@@ -348,19 +355,15 @@ page_free(struct PageInfo *pp)
 	// pp->pp_link is not NULL.
 	if(pp->pp_ref || pp->pp_link)
 		panic("Reference for this page is not NULL");
-	if(pp > page_free_list) {
-		pp->pp_link = page_free_list;
+	if(page_free_list == NULL ) {
 		page_free_list = pp;
 	} else {
-		next = head->pp_link;
-		while( head > pp && next > pp ) {
-			head = next;
-			next = head->pp_link;
+		while( head->pp_link ) {
+			head = head->pp_link;
 		}
-		pp->pp_link = next;
 		head->pp_link = pp;
 	}
-//	cprintf("Freed page: %d(%x)\n",pp-pages,(uint32_t)pp);
+	cprintf("Freed page: %d(%x)\n",pp-pages,(uint32_t)pp);
 }
 
 //
@@ -452,6 +455,8 @@ boot_map_region(pde_t *pgdir, uintptr_t va, size_t size, physaddr_t pa, int perm
 	for(_va=(uint32_t)va,_pa=(uint32_t)pa,i=0;i<size/PGSIZE;_va+=PGSIZE,_pa+=PGSIZE,i++){
 		_pte = pgdir_walk(pgdir, (const void *)_va, 1);
 		*_pte = _pa | perm | PTE_P;
+		if(_va>= KSTACKTOP-KSTKSIZE && _va<=KSTACKTOP)
+		cprintf("pgdir %x PDX(va): %d PTX(_va): %d va %x pa: %x _pte:%x *_pte: %x\n",pgdir, PDX(_va),PTX(_va),_va, _pa,_pte,*_pte);
 	} 
 }
 
@@ -610,7 +615,7 @@ tlb_invalidate(pde_t *pgdir, void *va)
 static void
 check_page_free_list(bool only_low_memory)
 {
-//	cprintf("Entering check_page_free_list\n");
+	cprintf("Entering check_page_free_list\n");
 	struct PageInfo *pp;
 	unsigned pdx_limit = only_low_memory ? 1 : NPDENTRIES;
 	int nfree_basemem = 0, nfree_extmem = 0;
@@ -666,6 +671,7 @@ check_page_free_list(bool only_low_memory)
 	assert(nfree_extmem > 0);
 
 	cprintf("check_page_free_list() succeeded!\n");
+	cprintf("Leaving check_page_free_list\n");
 }
 
 //
@@ -675,7 +681,7 @@ check_page_free_list(bool only_low_memory)
 static void
 check_page_alloc(void)
 {
-	//cprintf("Entering check_page_alloc\n");
+	cprintf("Entering check_page_alloc\n");
 	struct PageInfo *pp, *pp0, *pp1, *pp2;
 	int nfree;
 	struct PageInfo *fl;
@@ -745,6 +751,7 @@ check_page_alloc(void)
 	assert(nfree == 0);
 
 	cprintf("check_page_alloc() succeeded!\n");
+	cprintf("Leaving check_page_alloc\n");
 }
 
 //
@@ -772,6 +779,7 @@ check_kern_pgdir(void)
 //		cprintf("Check_ker_pgdir: pages array: %d UPS:%x succeeded\n",i/PGSIZE,UPAGES+i);
 	}
 
+	cprintf("######### pages array checked\n");	
 
 	// check phys mem
 	for (i = 0; i < npages * PGSIZE; i += PGSIZE)
@@ -828,6 +836,7 @@ check_va2pa(pde_t *pgdir, uintptr_t va)
 static void
 check_page(void)
 {
+	cprintf("Entering check_page\n");
 	struct PageInfo *pp, *pp0, *pp1, *pp2;
 	struct PageInfo *fl;
 	pte_t *ptep, *ptep1;
@@ -975,12 +984,14 @@ check_page(void)
 	page_free(pp2);
 
 	cprintf("check_page() succeeded!\n");
+	cprintf("Leaving check_page\n");
 }
 
 // check page_insert, page_remove, &c, with an installed kern_pgdir
 static void
 check_page_installed_pgdir(void)
 {
+	cprintf("Entering check_page_installed_pgdir\n");
 	struct PageInfo *pp, *pp0, *pp1, *pp2;
 	struct PageInfo *fl;
 	pte_t *ptep, *ptep1;
@@ -1008,6 +1019,7 @@ check_page_installed_pgdir(void)
 	assert(pp2->pp_ref == 0);
 
 	// forcibly take pp0 back
+	cprintf("PTE_ADDR(kern_pgdir[0]): %x page2pa(pp0): %x\n",PTE_ADDR(kern_pgdir[0]),page2pa(pp0));
 	assert(PTE_ADDR(kern_pgdir[0]) == page2pa(pp0));
 	kern_pgdir[0] = 0;
 	assert(pp0->pp_ref == 1);
