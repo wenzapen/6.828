@@ -526,7 +526,7 @@ env_run(struct Env *e)
 	//	e->env_tf to sensible values.
 
 	// LAB 3: Your code here.
-	cprintf("env_run: start\n");
+//	cprintf("env_run: start\n");
 	if(!e)
 		panic("No env to run\n");
 	if(e!=curenv) {

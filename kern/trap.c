@@ -87,7 +87,7 @@ trap_init(void)
 	SETGATE(idt[T_DIVIDE], 1, GD_KT, ISR0, 0);
 	SETGATE(idt[T_DEBUG], 1, GD_KT, ISR1, 0);
 	SETGATE(idt[T_NMI], 1, GD_KT, ISR2, 0);
-	SETGATE(idt[T_BRKPT], 1, GD_KT, ISR3, 0);
+	SETGATE(idt[T_BRKPT], 1, GD_KT, ISR3, 3);
 	SETGATE(idt[T_OFLOW], 1, GD_KT, ISR4, 0);
 	SETGATE(idt[T_BOUND], 1, GD_KT, ISR5, 0);
 	SETGATE(idt[T_ILLOP], 1, GD_KT, ISR6, 0);
@@ -183,6 +183,21 @@ trap_dispatch(struct Trapframe *tf)
 	// LAB 3: Your code here.
 	const char* trap_name = trapname(tf->tf_trapno);
 	cprintf("trap_dispatch: Trap name: %s Trap id: %d\n", trap_name, tf->tf_trapno);
+	if(tf->tf_trapno == T_SYSCALL) {
+		cprintf("trap id: %d = %d\n", tf->tf_trapno, T_SYSCALL);
+		tf->tf_regs.reg_eax = syscall(tf->tf_regs.reg_eax,tf->tf_regs.reg_edx, tf->tf_regs.reg_ecx, tf->tf_regs.reg_ebx, tf->tf_regs.reg_edi, tf->tf_regs.reg_esi); 
+		return;
+	}
+	if(tf->tf_trapno == T_PGFLT) {
+//		cprintf("trap id: %d = %d\n", tf->tf_trapno, T_PGFLT);
+		page_fault_handler(tf);
+		return;
+	}
+	if(tf->tf_trapno == T_BRKPT) {
+		cprintf("trap id: %d = %d\n", tf->tf_trapno, T_BRKPT);
+		monitor(tf);
+		return;
+	}
 	// Unexpected trap: The user process or the kernel has a bug.
 	print_trapframe(tf);
 	if (tf->tf_cs == GD_KT)

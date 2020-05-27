@@ -79,7 +79,12 @@ _alltraps:
 	mov %ax, %es
 	pushl %esp
 	call trap
-	ret
+	addl $4, %esp
+	popal
+	pop %es
+	pop %ds
+	addl $8, %esp
+	iret
 
 /*
  * Lab 3: Your code here for _alltraps
