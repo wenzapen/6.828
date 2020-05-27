@@ -17,6 +17,7 @@ extern size_t npages;
 
 extern pde_t *kern_pgdir;
 
+void pgdir_test(pte_t *pgdir);
 
 /* This macro takes a kernel virtual address -- an address that points above
  * KERNBASE, where the machine's maximum 256MB of physical memory is mapped --

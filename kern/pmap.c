@@ -19,7 +19,7 @@ pde_t *kern_pgdir;		// Kernel's initial page directory
 struct PageInfo *pages;		// Physical page state array
 static struct PageInfo *page_free_list = NULL;	// Free list of physical pages
 
-static void print_page_free_list() {
+void print_page_free_list() {
 	struct PageInfo * p = page_free_list;
 	for(int i=0; i<10; i++) {
 		if(p) {
@@ -28,6 +28,53 @@ static void print_page_free_list() {
 		}
 	}
 	cprintf("Checking page_free_list: over\n");
+}
+
+// assume start address is PGSIZE aligned
+void pgdir_test(pde_t *pgdir) {
+// test KERNBASE to 0xffffffff
+	uintptr_t va, va_start, va_end;
+	pte_t *pt;
+	va_start = KERNBASE;
+	va_end = ~0;
+	for (va=va_start; va < va_end, va; va+=PGSIZE) {
+//		cprintf("pgdir_test: va_start: %x va_end: %x va: %x\n", va_start, va_end, va);
+		pt = (pte_t *)KADDR(PTE_ADDR(pgdir[PDX(va)]));
+		assert(PTE_ADDR(pt[PTX(va)]) == PADDR((void*)va));	
+//		cprintf("PTE: %x PADDR: %x\n", PTE_ADDR(pt[PTX(va)]), PADDR((void*)va));
+	}
+// test KSTACK 
+        va_start = KSTACKTOP - (bootstacktop - bootstack);
+        va_end = KSTACKTOP;
+	uintptr_t _bootstack = (uintptr_t)bootstack;
+        for (va=va_start; va < va_end && va; va+=PGSIZE, _bootstack+=PGSIZE) {
+		cprintf("Kstack: va_start: %x va_end %x va: %x _bootstack: %x\n",va_start,va_end,va,_bootstack);
+                pt = (pte_t *)KADDR(PTE_ADDR(pgdir[PDX(va)]));
+                cprintf("KSTACK: %x PADDR: %x\n", va, PADDR((void*)_bootstack));
+                assert(PTE_ADDR(pt[PTX(va)]) == PADDR((void*)_bootstack));      
+        }
+// test UENVS 
+        va_start = UENVS;
+        va_end = UENVS+sizeof(struct Env)*NENV;
+	uintptr_t _envs = (uintptr_t)envs;
+        for (va=va_start; va < va_end && va; va+=PGSIZE, _envs+=PGSIZE) {
+              cprintf("UENVS: va_start: %x va_end: %x va: %x\n", va_start, va_end, _envs);
+                pt = (pte_t *)KADDR(PTE_ADDR(pgdir[PDX(va)]));
+                assert(PTE_ADDR(pt[PTX(va)]) == PADDR((void*)_envs));      
+                cprintf("UENVS: %x PADDR: %x\n", va, PADDR((void*)_envs));
+        }
+// test UPAGES 
+        va_start = UPAGES;
+        va_end = UPAGES+sizeof(struct PageInfo)*npages;
+	uintptr_t _pages = (uintptr_t)pages;
+        for (va=va_start; va < va_end && va; va+=PGSIZE,_pages+=PGSIZE) {
+              cprintf("UPAGES: va_start: %x va_end: %x va: %x\n", va_start, va_end, _pages);
+                pt = (pte_t *)KADDR(PTE_ADDR(pgdir[PDX(va)]));
+                assert(PTE_ADDR(pt[PTX(va)]) == PADDR((void*)_pages));      
+                cprintf("UPAGES: %x PADDR: %x\n", va, PADDR((void*)_pages));
+        }
+	cprintf("pgdir_test: kern_pgdir: %x\n", kern_pgdir);
+
 }
 
 // --------------------------------------------------------------
@@ -171,6 +218,8 @@ mem_init(void)
 	//////////////////////////////////////////////////////////////////////
 	// Make 'envs' point to an array of size 'NENV' of 'struct Env'.
 	// LAB 3: Your code here.
+	envs = (struct Env *)boot_alloc(sizeof(struct Env) * NENV);
+	memset(envs, 0, sizeof(struct Env) * NENV); 
 
 	//////////////////////////////////////////////////////////////////////
 	// Now that we've allocated the initial kernel data structures, we set
@@ -203,6 +252,7 @@ mem_init(void)
 	//    - the new image at UENVS  -- kernel R, user R
 	//    - envs itself -- kernel RW, user NONE
 	// LAB 3: Your code here.
+	boot_map_region(kern_pgdir, UENVS, ROUNDUP(NENV*sizeof(struct Env),PGSIZE),PADDR(envs),PTE_U);
 
 	//////////////////////////////////////////////////////////////////////
 	// Use the physical memory that 'bootstack' refers to as the kernel
@@ -250,6 +300,8 @@ mem_init(void)
 
 	// Some more checks, only possible after kern_pgdir is installed.
 	check_page_installed_pgdir();
+//	cprintf("Starting pgdir_test\n");
+//	pgdir_test(kern_pgdir);
 }
 
 // --------------------------------------------------------------
@@ -286,6 +338,7 @@ page_init(void)
 	// free pages!
 	size_t i;
 	size_t spages = npages * sizeof(struct PageInfo); 
+	size_t senvs = NENV * sizeof(struct Env);
 	for (i = 0; i < npages; i++) {
 		if(i==0) {
 			pages[i].pp_ref = 1;
@@ -298,6 +351,11 @@ page_init(void)
 			continue;
 		}
 		if(i>=npages_basemem && i<ROUNDUP(PADDR(pages)+spages, PGSIZE)/PGSIZE) {
+			pages[i].pp_ref = 1;
+			pages[i].pp_link = NULL;
+			continue;
+		}
+		if(i>=PADDR(envs)/PGSIZE && i<ROUNDUP(PADDR(envs)+senvs, PGSIZE)/PGSIZE) {
 			pages[i].pp_ref = 1;
 			pages[i].pp_link = NULL;
 			continue;

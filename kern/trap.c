@@ -10,6 +10,25 @@
 #include <kern/syscall.h>
 
 static struct Taskstate ts;
+extern void ISR0();
+extern void ISR1();
+extern void ISR2();
+extern void ISR3();
+extern void ISR4();
+extern void ISR5();
+extern void ISR6();
+extern void ISR7();
+extern void ISR8();
+extern void ISR10();
+extern void ISR11();
+extern void ISR12();
+extern void ISR13();
+extern void ISR14();
+extern void ISR16();
+extern void ISR17();
+extern void ISR18();
+extern void ISR19();
+extern void ISR48();
 
 /* For debugging, so print_trapframe can distinguish between printing
  * a saved trapframe and printing the current trapframe and print some
@@ -65,7 +84,25 @@ trap_init(void)
 	extern struct Segdesc gdt[];
 
 	// LAB 3: Your code here.
-
+	SETGATE(idt[T_DIVIDE], 1, GD_KT, ISR0, 0);
+	SETGATE(idt[T_DEBUG], 1, GD_KT, ISR1, 0);
+	SETGATE(idt[T_NMI], 1, GD_KT, ISR2, 0);
+	SETGATE(idt[T_BRKPT], 1, GD_KT, ISR3, 0);
+	SETGATE(idt[T_OFLOW], 1, GD_KT, ISR4, 0);
+	SETGATE(idt[T_BOUND], 1, GD_KT, ISR5, 0);
+	SETGATE(idt[T_ILLOP], 1, GD_KT, ISR6, 0);
+	SETGATE(idt[T_DEVICE], 1, GD_KT, ISR7, 0);
+	SETGATE(idt[T_DBLFLT], 1, GD_KT, ISR8, 0);
+	SETGATE(idt[T_TSS], 1, GD_KT, ISR10, 0);
+	SETGATE(idt[T_SEGNP], 1, GD_KT, ISR11, 0);
+	SETGATE(idt[T_STACK], 1, GD_KT, ISR12, 0);
+	SETGATE(idt[T_GPFLT], 1, GD_KT, ISR13, 0);
+	SETGATE(idt[T_PGFLT], 1, GD_KT, ISR14, 0);
+	SETGATE(idt[T_FPERR], 1, GD_KT, ISR16, 0);
+	SETGATE(idt[T_ALIGN], 1, GD_KT, ISR17, 0);
+	SETGATE(idt[T_MCHK], 1, GD_KT, ISR18, 0);
+	SETGATE(idt[T_SIMDERR], 1, GD_KT, ISR19, 0);
+	SETGATE(idt[T_SYSCALL], 1, GD_KT, ISR48, 3);
 	// Per-CPU setup 
 	trap_init_percpu();
 }
@@ -144,7 +181,8 @@ trap_dispatch(struct Trapframe *tf)
 {
 	// Handle processor exceptions.
 	// LAB 3: Your code here.
-
+	const char* trap_name = trapname(tf->tf_trapno);
+	cprintf("trap_dispatch: Trap name: %s Trap id: %d\n", trap_name, tf->tf_trapno);
 	// Unexpected trap: The user process or the kernel has a bug.
 	print_trapframe(tf);
 	if (tf->tf_cs == GD_KT)
