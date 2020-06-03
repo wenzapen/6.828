@@ -29,6 +29,43 @@ sched_yield(void)
 	// below to halt the cpu.
 
 	// LAB 4: Your code here.
+	envid_t next_env_id;
+	int i;
+//	cprintf("CPU : %d starts to schedule new env curenv: %x\n",thiscpu->cpu_id, curenv);
+	if(!curenv) {
+		next_env_id = 0;
+		for(i=0; i<NENV; i++) {
+//			cprintf("CPU: %d envs[%d]: status: %d\n",thiscpu->cpu_id,next_env_id, envs[next_env_id].env_status);
+			if(envs[next_env_id].env_status == ENV_RUNNABLE) {
+				break;
+			}
+			next_env_id = (next_env_id + 1) % NENV;
+		}	
+		if(i<NENV) {
+//			cprintf("CPU : %d scheduled env: %d\n",thiscpu->cpu_id, next_env_id);
+	//		thiscpu->cpu_env = &envs[next_env_id];
+			env_run(&envs[next_env_id]);
+		}
+
+	} else {
+		next_env_id = (thiscpu->cpu_env->env_id + 1) % NENV;
+		for(i=1; i<NENV; i++) {
+			if(envs[next_env_id].env_status == ENV_RUNNABLE)
+				break;
+			next_env_id = (next_env_id + 1) % NENV;
+	
+		}	
+		if(i<NENV) {
+//			cprintf("CPU : %d scheduled env: %d\n",thiscpu->cpu_id, next_env_id);
+	//		thiscpu->cpu_env = &envs[next_env_id];
+			env_run(&envs[next_env_id]);
+		}
+		if(i==NENV && thiscpu->cpu_env->env_id==envs[next_env_id].env_id && envs[next_env_id].env_status == ENV_RUNNING) {
+//			cprintf("CPU : %d scheduled env: %d\n",thiscpu->cpu_id, next_env_id);
+	//		thiscpu->cpu_env = &envs[next_env_id];
+			env_run(&envs[next_env_id]);
+		}
+	}	
 
 	// sched_halt never returns
 	sched_halt();
@@ -66,6 +103,7 @@ sched_halt(void)
 	xchg(&thiscpu->cpu_status, CPU_HALTED);
 
 	// Release the big kernel lock as if we were "leaving" the kernel
+//	cprintf("CPU: %d released kernel lock\n", thiscpu->cpu_id);
 	unlock_kernel();
 
 	// Reset stack pointer, enable interrupts and then halt.

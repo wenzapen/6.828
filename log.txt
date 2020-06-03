@@ -1,0 +1,270 @@
+CPU : 0 starts to schedule new env curenv: 0
+CPU : 0 scheduled env: 0
+CPU: 0 set env : 0 env_status: 3
+CPU: 0 start to run env : 0 env_status: 3
+CPU: 0 released kernel lock
+CPU: 1 acquired kernel lock
+CPU : 1 starts to schedule new env curenv: 0
+CPU : 1 scheduled env: 1
+CPU: 1 set env : 1 env_status: 3
+CPU: 1 start to run env : 1 env_status: 3
+CPU: 1 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU: 0 start to run env : 0 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU: 1 start to run env : 1 env_status: 3
+CPU: 1 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Hello, I am environment 00001000.
+CPU: 0 start to run env : 0 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Hello, I am environment 00001001.
+CPU: 1 start to run env : 1 env_status: 3
+CPU: 1 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 0 starts to schedule new env curenv: f032b000
+CPU : 0 scheduled env: 0
+CPU: 0 start to run env : 0 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 1 starts to schedule new env curenv: f032b07c
+CPU : 1 scheduled env: 2
+CPU: 1 set env : 2 env_status: 3
+CPU: 1 start to run env : 2 env_status: 3
+CPU: 1 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Back in environment 00001000, iteration 0.
+CPU: 0 start to run env : 0 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU: 1 start to run env : 2 env_status: 3
+CPU: 1 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 0 starts to schedule new env curenv: f032b000
+CPU : 0 scheduled env: 1
+CPU: 0 set env : 1 env_status: 3
+CPU: 0 start to run env : 1 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Hello, I am environment 00001002.
+CPU: 1 start to run env : 2 env_status: 3
+CPU: 1 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Back in environment 00001001, iteration 0.
+CPU: 0 start to run env : 1 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 1 starts to schedule new env curenv: f032b0f8
+CPU : 1 scheduled env: 3
+CPU: 1 set env : 3 env_status: 3
+CPU: 1 start to run env : 3 env_status: 3
+CPU: 1 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 0 starts to schedule new env curenv: f032b07c
+CPU : 0 scheduled env: 2
+CPU: 0 set env : 2 env_status: 3
+CPU: 0 start to run env : 2 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU: 1 start to run env : 3 env_status: 3
+CPU: 1 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Back in environment 00001002, iteration 0.
+CPU: 0 start to run env : 2 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Hello, I am environment 00001003.
+CPU: 1 start to run env : 3 env_status: 3
+CPU: 1 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 0 starts to schedule new env curenv: f032b0f8
+CPU : 0 scheduled env: 0
+CPU: 0 set env : 0 env_status: 3
+CPU: 0 start to run env : 0 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 1 starts to schedule new env curenv: f032b174
+CPU: 1 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Back in environment 00001000, iteration 1.
+CPU: 0 start to run env : 0 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 0 starts to schedule new env curenv: f032b000
+CPU : 0 scheduled env: 1
+CPU: 0 set env : 1 env_status: 3
+CPU: 0 start to run env : 1 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Back in environment 00001001, iteration 1.
+CPU: 0 start to run env : 1 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 0 starts to schedule new env curenv: f032b07c
+CPU : 0 scheduled env: 2
+CPU: 0 set env : 2 env_status: 3
+CPU: 0 start to run env : 2 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Back in environment 00001002, iteration 1.
+CPU: 0 start to run env : 2 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 0 starts to schedule new env curenv: f032b0f8
+CPU : 0 scheduled env: 0
+CPU: 0 set env : 0 env_status: 3
+CPU: 0 start to run env : 0 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Back in environment 00001000, iteration 2.
+CPU: 0 start to run env : 0 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 0 starts to schedule new env curenv: f032b000
+CPU : 0 scheduled env: 1
+CPU: 0 set env : 1 env_status: 3
+CPU: 0 start to run env : 1 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Back in environment 00001001, iteration 2.
+CPU: 0 start to run env : 1 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 0 starts to schedule new env curenv: f032b07c
+CPU : 0 scheduled env: 2
+CPU: 0 set env : 2 env_status: 3
+CPU: 0 start to run env : 2 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Back in environment 00001002, iteration 2.
+CPU: 0 start to run env : 2 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 0 starts to schedule new env curenv: f032b0f8
+CPU : 0 scheduled env: 0
+CPU: 0 set env : 0 env_status: 3
+CPU: 0 start to run env : 0 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Back in environment 00001000, iteration 3.
+CPU: 0 start to run env : 0 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 0 starts to schedule new env curenv: f032b000
+CPU : 0 scheduled env: 1
+CPU: 0 set env : 1 env_status: 3
+CPU: 0 start to run env : 1 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Back in environment 00001001, iteration 3.
+CPU: 0 start to run env : 1 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 0 starts to schedule new env curenv: f032b07c
+CPU : 0 scheduled env: 2
+CPU: 0 set env : 2 env_status: 3
+CPU: 0 start to run env : 2 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Back in environment 00001002, iteration 3.
+CPU: 0 start to run env : 2 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+CPU : 0 starts to schedule new env curenv: f032b0f8
+CPU : 0 scheduled env: 0
+CPU: 0 set env : 0 env_status: 3
+CPU: 0 start to run env : 0 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Back in environment 00001000, iteration 4.
+CPU: 0 start to run env : 0 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+All done in environment 00001000.
+CPU: 0 start to run env : 0 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+[00001000] exiting gracefully
+[00001000] free env 00001000
+CPU : 0 starts to schedule new env curenv: 0
+CPU : 0 scheduled env: 1
+CPU: 0 set env : 1 env_status: 3
+CPU: 0 start to run env : 1 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Back in environment 00001001, iteration 4.
+CPU: 0 start to run env : 1 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+All done in environment 00001001.
+CPU: 0 start to run env : 1 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+[00001001] exiting gracefully
+[00001001] free env 00001001
+CPU : 0 starts to schedule new env curenv: 0
+CPU : 0 scheduled env: 2
+CPU: 0 set env : 2 env_status: 3
+CPU: 0 start to run env : 2 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+Back in environment 00001002, iteration 4.
+CPU: 0 start to run env : 2 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+All done in environment 00001002.
+CPU: 0 start to run env : 2 env_status: 3
+CPU: 0 released kernel lock
+trap_dispatch: Trap name: System call Trap id: 48
+trap id: 48 = 48
+[00001002] exiting gracefully
+[00001002] free env 00001002
+CPU : 0 starts to schedule new env curenv: 0
+CPU: 0 released kernel lock
+
