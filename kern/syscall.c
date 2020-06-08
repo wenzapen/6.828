@@ -334,10 +334,48 @@ static int
 sys_ipc_try_send(envid_t envid, uint32_t value, void *srcva, unsigned perm)
 {
 	// LAB 4: Your code here.
-	panic("sys_ipc_try_send not implemented");
+	struct Env *dst_env;
+	int r;
+	void *dstva;
+	pte_t *_pte;
+	struct PageInfo *p;
+//	cprintf("sys_ipc_try_send: dst_envid: %x value: %x srvva: %x perm: %x \n",envid,value,srcva,perm);
+	if((r=envid2env(envid, &dst_env,0)) < 0)
+       		return r;	
+//	cprintf("sys_ipc_try_send: start: dst_env: %x ipc_recving: %d env_status: %d eflags: %x\n",dst_env->env_id,dst_env->env_ipc_recving, dst_env->env_status,dst_env->env_tf.tf_eflags);
+	if(!dst_env->env_ipc_recving) {
+//		cprintf("sys_ipc_try_send: dst_env is not ready to receive: ipc_recving: %x status: %x\n", dst_env->env_ipc_recving, dst_env->env_status);
+		return -E_IPC_NOT_RECV;
+	}
+	dst_env->env_ipc_value = value;
+	dst_env->env_ipc_from = curenv->env_id;
+	dst_env->env_ipc_perm = 0;
+	dstva = dst_env->env_ipc_dstva;
+	if(((uint32_t)srcva < UTOP) && ((uint32_t)dstva < UTOP)) {
+		if(perm & ~PTE_SYSCALL) {
+//			cprintf("~PTE_SYSCALL: %x\n",~PTE_SYSCALL);
+			return -E_INVAL;
+		}
+		if(!(p = page_lookup(curenv->env_pgdir, srcva, &_pte)))
+			return -E_NO_MEM;
+//		cprintf("sys_page_map: perm: %x pte: %x\n", perm, *_pte);
+		if((perm & PTE_W) && !(*_pte & PTE_W)) {
+//			cprintf("sys_page_map: perm check: \n");
+			return -E_INVAL;	
+		}
+		if((r=page_insert(dst_env->env_pgdir, p, dstva, perm)) < 0) {
+			return -E_NO_MEM;
+		}
+		dst_env->env_ipc_perm = perm;
+	}
+	dst_env->env_ipc_recving = 0;
+	dst_env->env_tf.tf_regs.reg_eax = 0;
+//	cprintf("sys_ipc_try_send: Mid: dst_env: %x ipc_recving(should be 0): %d env_status(should be 4): %d\n",dst_env->env_id,dst_env->env_ipc_recving, dst_env->env_status);
+	dst_env->env_status = ENV_RUNNABLE;
+//	cprintf("sys_ipc_try_send: After: dst_env: %x ipc_recving(should be 0): %d env_status(should be 2): %d\n",dst_env->env_id,dst_env->env_ipc_recving, dst_env->env_status);
+	return 0;
+//	panic("sys_ipc_try_send not implemented");
 }
-
-// Block until a value is ready.  Record that you want to receive
 // using the env_ipc_recving and env_ipc_dstva fields of struct Env,
 // mark yourself not runnable, and then give up the CPU.
 //
@@ -352,7 +390,18 @@ static int
 sys_ipc_recv(void *dstva)
 {
 	// LAB 4: Your code here.
-	panic("sys_ipc_recv not implemented");
+	if((uint32_t)dstva < UTOP)  {
+		if((uint32_t)dstva % PGSIZE)
+			return -E_INVAL;
+		curenv->env_ipc_dstva = dstva;
+	}
+//	cprintf("sys_ipc_recv: Start: env: %x status(should be 3): %d receiving(should be 0): %x\n",curenv->env_id, curenv->env_status, curenv->env_ipc_recving);
+	curenv->env_ipc_recving = 1;
+	curenv->env_status = ENV_NOT_RUNNABLE;
+//	cprintf("sys_ipc_recv: After:env: %x status(should be 4): %d receiving(should be 1): %x\n",curenv->env_id, curenv->env_status, curenv->env_ipc_recving);
+//	cprintf("sys_ipc_recv: env : %x yield CPU status: %x ipc_recving: %x envs[0].status: %x envs[1].status : %x\n",curenv->env_id,curenv->env_status, curenv->env_ipc_recving, envs[0].env_status,envs[1].env_status);
+	sched_yield();
+//	panic("sys_ipc_recv not implemented");
 	return 0;
 }
 
@@ -402,6 +451,12 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 		}
 		case SYS_exofork: {
 			return sys_exofork();
+		}
+		case SYS_ipc_try_send: {
+			return sys_ipc_try_send((envid_t)a1,(uint32_t)a2,(void*)a3,(unsigned)a4);
+		}
+		case SYS_ipc_recv: {
+			return sys_ipc_recv((void*)a1);
 		}
 		default:
 			return -E_INVAL;

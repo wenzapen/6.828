@@ -34,6 +34,12 @@ extern void ISR17();
 extern void ISR18();
 extern void ISR19();
 extern void ISR48();
+extern void IRQ0();
+extern void IRQ1();
+extern void IRQ4();
+extern void IRQ7();
+extern void IRQ14();
+extern void IRQ19();
 
 /* For debugging, so print_trapframe can distinguish between printing
  * a saved trapframe and printing the current trapframe and print some
@@ -91,25 +97,31 @@ trap_init(void)
 	extern struct Segdesc gdt[];
 
 	// LAB 3: Your code here.
-	SETGATE(idt[T_DIVIDE], 1, GD_KT, ISR0, 0);
-	SETGATE(idt[T_DEBUG], 1, GD_KT, ISR1, 0);
-	SETGATE(idt[T_NMI], 1, GD_KT, ISR2, 0);
-	SETGATE(idt[T_BRKPT], 1, GD_KT, ISR3, 3);
-	SETGATE(idt[T_OFLOW], 1, GD_KT, ISR4, 0);
-	SETGATE(idt[T_BOUND], 1, GD_KT, ISR5, 0);
-	SETGATE(idt[T_ILLOP], 1, GD_KT, ISR6, 0);
-	SETGATE(idt[T_DEVICE], 1, GD_KT, ISR7, 0);
-	SETGATE(idt[T_DBLFLT], 1, GD_KT, ISR8, 0);
-	SETGATE(idt[T_TSS], 1, GD_KT, ISR10, 0);
-	SETGATE(idt[T_SEGNP], 1, GD_KT, ISR11, 0);
-	SETGATE(idt[T_STACK], 1, GD_KT, ISR12, 0);
-	SETGATE(idt[T_GPFLT], 1, GD_KT, ISR13, 0);
-	SETGATE(idt[T_PGFLT], 1, GD_KT, ISR14, 0);
-	SETGATE(idt[T_FPERR], 1, GD_KT, ISR16, 0);
-	SETGATE(idt[T_ALIGN], 1, GD_KT, ISR17, 0);
-	SETGATE(idt[T_MCHK], 1, GD_KT, ISR18, 0);
-	SETGATE(idt[T_SIMDERR], 1, GD_KT, ISR19, 0);
-	SETGATE(idt[T_SYSCALL], 1, GD_KT, ISR48, 3);
+	SETGATE(idt[T_DIVIDE], 0, GD_KT, ISR0, 0);
+	SETGATE(idt[T_DEBUG], 0, GD_KT, ISR1, 0);
+	SETGATE(idt[T_NMI], 0, GD_KT, ISR2, 0);
+	SETGATE(idt[T_BRKPT], 0, GD_KT, ISR3, 3);
+	SETGATE(idt[T_OFLOW], 0, GD_KT, ISR4, 0);
+	SETGATE(idt[T_BOUND], 0, GD_KT, ISR5, 0);
+	SETGATE(idt[T_ILLOP], 0, GD_KT, ISR6, 0);
+	SETGATE(idt[T_DEVICE], 0, GD_KT, ISR7, 0);
+	SETGATE(idt[T_DBLFLT], 0, GD_KT, ISR8, 0);
+	SETGATE(idt[T_TSS], 0, GD_KT, ISR10, 0);
+	SETGATE(idt[T_SEGNP], 0, GD_KT, ISR11, 0);
+	SETGATE(idt[T_STACK], 0, GD_KT, ISR12, 0);
+	SETGATE(idt[T_GPFLT], 0, GD_KT, ISR13, 0);
+	SETGATE(idt[T_PGFLT], 0, GD_KT, ISR14, 0);
+	SETGATE(idt[T_FPERR], 0, GD_KT, ISR16, 0);
+	SETGATE(idt[T_ALIGN], 0, GD_KT, ISR17, 0);
+	SETGATE(idt[T_MCHK], 0, GD_KT, ISR18, 0);
+	SETGATE(idt[T_SIMDERR], 0, GD_KT, ISR19, 0);
+	SETGATE(idt[T_SYSCALL], 0, GD_KT, ISR48, 3);
+	SETGATE(idt[IRQ_OFFSET+IRQ_TIMER], 0, GD_KT, IRQ0, 0);
+	SETGATE(idt[IRQ_OFFSET+IRQ_KBD], 0, GD_KT, IRQ1, 0);
+	SETGATE(idt[IRQ_OFFSET+IRQ_SERIAL], 0, GD_KT, IRQ4, 0);
+	SETGATE(idt[IRQ_OFFSET+IRQ_SPURIOUS], 0, GD_KT, IRQ7, 0);
+	SETGATE(idt[IRQ_OFFSET+IRQ_IDE], 0, GD_KT, IRQ14, 0);
+	SETGATE(idt[IRQ_OFFSET+IRQ_ERROR], 0, GD_KT, IRQ19, 0);
 	// Per-CPU setup 
 	trap_init_percpu();
 }
@@ -246,6 +258,14 @@ trap_dispatch(struct Trapframe *tf)
 	// Handle clock interrupts. Don't forget to acknowledge the
 	// interrupt using lapic_eoi() before calling the scheduler!
 	// LAB 4: Your code here.
+	if (tf->tf_trapno == IRQ_OFFSET + IRQ_TIMER) {
+//		cprintf("cpuid: %d envid: %x timer interrupt on irq 0\n",cpunum(), curenv->env_id);
+	//	print_trapframe(tf);
+//		cprintf("envs[0]: status: %x envs[1]: status: %x\n",envs[0].env_status,envs[1].env_status);
+		lapic_eoi();
+		sched_yield();
+		return;
+	}
 
 	// Unexpected trap: The user process or the kernel has a bug.
 	print_trapframe(tf);
@@ -276,6 +296,7 @@ trap(struct Trapframe *tf)
 	// Check that interrupts are disabled.  If this assertion
 	// fails, DO NOT be tempted to fix it by inserting a "cli" in
 	// the interrupt path.
+//	cprintf("Trap: env: %x read_eflags: %08x FL_IF: %08x Trap no: %d\n",curenv, read_eflags(), FL_IF, tf->tf_trapno);
 	assert(!(read_eflags() & FL_IF));
 
 	if ((tf->tf_cs & 3) == 3) {
@@ -315,6 +336,7 @@ trap(struct Trapframe *tf)
 		env_run(curenv);
 	else
 		sched_yield();
+
 }
 
 

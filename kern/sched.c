@@ -29,43 +29,32 @@ sched_yield(void)
 	// below to halt the cpu.
 
 	// LAB 4: Your code here.
-	envid_t next_env_id;
+	int next_env_index = 0;
+	struct Env *this_env;
+	int this_envid;
 	int i;
+//        assert(!(read_eflags() & FL_IF));
 //	cprintf("CPU : %d starts to schedule new env curenv: %x\n",thiscpu->cpu_id, curenv);
-	if(!curenv) {
-		next_env_id = 0;
-		for(i=0; i<NENV; i++) {
-//			cprintf("CPU: %d envs[%d]: status: %d\n",thiscpu->cpu_id,next_env_id, envs[next_env_id].env_status);
-			if(envs[next_env_id].env_status == ENV_RUNNABLE) {
-				break;
-			}
-			next_env_id = (next_env_id + 1) % NENV;
-		}	
-		if(i<NENV) {
-//			cprintf("CPU : %d scheduled env: %d\n",thiscpu->cpu_id, next_env_id);
-	//		thiscpu->cpu_env = &envs[next_env_id];
-			env_run(&envs[next_env_id]);
+	if(curenv) 
+		next_env_index = (ENVX(curenv->env_id) + 1) % NENV;
+	for(i=0; i < NENV; i++) {
+		if(envs[next_env_index].env_status == ENV_RUNNABLE) {
+//			cprintf("sched_yield: next_env_index: %x \n", next_env_index);
+			if(curenv)
+				this_envid = curenv->env_id;
+			else
+				this_envid = 0;
+//			cprintf("CPU : %d curenv: %x scheduled env: %x\n",thiscpu->cpu_id,this_envid, envs[next_env_index].env_id);
+			env_run(&envs[next_env_index]);
 		}
 
-	} else {
-		next_env_id = (thiscpu->cpu_env->env_id + 1) % NENV;
-		for(i=1; i<NENV; i++) {
-			if(envs[next_env_id].env_status == ENV_RUNNABLE)
-				break;
-			next_env_id = (next_env_id + 1) % NENV;
+		next_env_index = (next_env_index + 1) % NENV;
+	}
+	if(curenv && curenv->env_status == ENV_RUNNING) {
+//			cprintf("CPU : %d curenv: %x scheduled env: %x\n",thiscpu->cpu_id,curenv->env_id, curenv->env_id);
+		env_run(curenv);
+	}
 	
-		}	
-		if(i<NENV) {
-//			cprintf("CPU : %d scheduled env: %d\n",thiscpu->cpu_id, next_env_id);
-	//		thiscpu->cpu_env = &envs[next_env_id];
-			env_run(&envs[next_env_id]);
-		}
-		if(i==NENV && thiscpu->cpu_env->env_id==envs[next_env_id].env_id && envs[next_env_id].env_status == ENV_RUNNING) {
-//			cprintf("CPU : %d scheduled env: %d\n",thiscpu->cpu_id, next_env_id);
-	//		thiscpu->cpu_env = &envs[next_env_id];
-			env_run(&envs[next_env_id]);
-		}
-	}	
 
 	// sched_halt never returns
 	sched_halt();
@@ -113,7 +102,7 @@ sched_halt(void)
 		"pushl $0\n"
 		"pushl $0\n"
 		// Uncomment the following line after completing exercise 13
-		//"sti\n"
+		"sti\n"
 		"1:\n"
 		"hlt\n"
 		"jmp 1b\n"

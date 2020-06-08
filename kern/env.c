@@ -271,7 +271,7 @@ env_alloc(struct Env **newenv_store, envid_t parent_id)
 
 	// Enable interrupts while in user mode.
 	// LAB 4: Your code here.
-
+	e->env_tf.tf_eflags |= FL_IF;
 	// Clear the page fault handler until user installs one.
 	e->env_pgfault_upcall = 0;
 
@@ -556,20 +556,23 @@ env_run(struct Env *e)
 //	cprintf("Prepare to run env: %x curenv: %x\n",e->env_id, curenv->env_id);
 	if(!e)
 		panic("No env to run\n");
+//	cprintf("Prepare to run env: %x\n",e->env_id);
 	if(e!=curenv) {
-		if(curenv)
+		if(curenv && curenv->env_status == ENV_RUNNING)
 			curenv->env_status = ENV_RUNNABLE;
 		curenv = e;
 		curenv->env_status = ENV_RUNNING;
-	//	cprintf("CPU: %d run a new env : %d\n", thiscpu->cpu_id, ENVX(e->env_id));
+//		cprintf("CPU: %d run a new env : %x\n", thiscpu->cpu_id, e->env_id);
 		curenv->env_runs++;
 		lcr3(PADDR(e->env_pgdir));	
 
 	} else {
-//		cprintf("CPU: %d continue to run env : %d\n", thiscpu->cpu_id, ENVX(e->env_id));
+//		cprintf("CPU: %d continue to run env : %x\n", thiscpu->cpu_id, e->env_id);
 	}
 //	cprintf("CPU: %d released kernel lock\n", thiscpu->cpu_id);
 	unlock_kernel();
+//	if(e->env_id == 0x1001)
+//		print_trapframe(&curenv->env_tf);
 	env_pop_tf(&curenv->env_tf);
 
 //	panic("env_run not yet implemented");
