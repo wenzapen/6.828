@@ -16,8 +16,10 @@ static int
 fsipc(unsigned type, void *dstva)
 {
 	static envid_t fsenv;
+//	cprintf("fsipc: env: %x fsenv: %x\n",thisenv->env_id, fsenv);
 	if (fsenv == 0)
 		fsenv = ipc_find_env(ENV_TYPE_FS);
+//	cprintf("fsipc: fsenv: %x \n", fsenv);
 
 	static_assert(sizeof(fsipcbuf) == PGSIZE);
 
@@ -141,7 +143,19 @@ devfile_write(struct Fd *fd, const void *buf, size_t n)
 	// remember that write is always allowed to write *fewer*
 	// bytes than requested.
 	// LAB 5: Your code here
-	panic("devfile_write not implemented");
+	int r;
+	int count = n;
+	fsipcbuf.write.req_fileid = fd->fd_file.id;
+	if(n > (PGSIZE - (sizeof(int) + sizeof(size_t))))
+		count = PGSIZE - (sizeof(int) + sizeof(size_t));
+	fsipcbuf.write.req_n = count;
+	memmove(fsipcbuf.write.req_buf, buf, count);
+	if ((r = fsipc(FSREQ_WRITE, NULL)) < 0)
+		return r;
+	assert(r <= n);
+	assert(r <= PGSIZE);
+	return r;
+//	panic("devfile_write not implemented");
 }
 
 static int
