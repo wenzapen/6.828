@@ -65,13 +65,16 @@ alloc_block(void)
 	// LAB 5: Your code here.a
 	int i;
 	for(i=0; i< super->s_nblocks; i++) {
-		if((bitmap[i] & 0xffff) == 0)
+//		cprintf("alloc_block: bitmap[%d]: %x\n",i, bitmap[i]);
+		if((bitmap[i] & 0xffffffff) == 0)
 		      continue;
 		int j;
 		for(j=0; j < 32; j++) {
-			if((bitmap[i] & (1 << j)) == 1) {
+//			cprintf("alloc_block: bitmap[%d]: %x bitmap&j: %x\n",i, bitmap[i],bitmap[i]&(1<<j));
+			if((bitmap[i] & (1 << j)) != 0) {
 				bitmap[i] &= ~(1 << j);
 				flush_block((void*)&bitmap[i]);
+//				cprintf("alloc_block: allocated block %d\n",i*32+j);
 				return i*32+j;
 			}
 		}
@@ -190,6 +193,9 @@ file_get_block(struct File *f, uint32_t filebno, char **blk)
 		return -E_INVAL;
 	if((r=file_block_walk(f, filebno, &ppdiskbno, true)) < 0)
 		return r;
+//	for(int i=0; i<NDIRECT;i++)
+//		cprintf("file_get_block: f_direct[%d]: %d\n",i, f->f_direct[i]);
+//       cprintf("file_get_block: flename: %s filebno: %d ppdiskbno: %d\n",f->f_name,filebno,*ppdiskbno);
 	if(*ppdiskbno == 0) {
 		if((r=alloc_block()) < 0)
 			return r;

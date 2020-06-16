@@ -269,6 +269,16 @@ trap_dispatch(struct Trapframe *tf)
 
 	// Handle keyboard and serial interrupts.
 	// LAB 5: Your code here.
+	if (tf->tf_trapno == IRQ_OFFSET + IRQ_KBD) {
+		lapic_eoi();
+		kbd_intr();
+		return;
+	}
+	if (tf->tf_trapno == IRQ_OFFSET + IRQ_SERIAL) {
+		lapic_eoi();
+		serial_intr();
+		return;
+	}
 
 	// Unexpected trap: The user process or the kernel has a bug.
 	print_trapframe(tf);
@@ -403,9 +413,9 @@ page_fault_handler(struct Trapframe *tf)
 		}
 		user_mem_assert(curenv, (void *)(xstacktop-sizeof(struct UTrapframe)-4), sizeof(struct UTrapframe)+4, PTE_W | PTE_U | PTE_P);
 		if(xstacktop == UXSTACKTOP) 
-			xstacktop -= sizeof(struct UTrapframe);
+			xstacktop -= sizeof(struct UTrapframe); //the first user page fault
 		else 
-			xstacktop -= (sizeof(struct UTrapframe) + 4);
+			xstacktop -= (sizeof(struct UTrapframe) + 4); // nested pgfault
 		utrapframe = (struct UTrapframe *)xstacktop;
 		utrapframe->utf_fault_va = fault_va;
 		utrapframe->utf_err = tf->tf_err;

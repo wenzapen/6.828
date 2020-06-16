@@ -99,6 +99,7 @@ spawn(const char *prog, const char **argv)
 	}
 
 	// Create new child environment
+//	cprintf("spawn: start to create a child\n");
 	if ((r = sys_exofork()) < 0)
 		return r;
 	child = r;
@@ -111,6 +112,7 @@ spawn(const char *prog, const char **argv)
 //	if ((r = init_stack(child, argv,&child_tf.tf_esp)) < 0)
 	if ((r = init_stack(child, argv,&local_esp)) < 0)
 		return r;
+	child_tf.tf_esp = local_esp;
 
 	// Set up program segments as defined in ELF header.
 	ph = (struct Proghdr*) (elf_buf + elf->e_phoff);
@@ -127,11 +129,13 @@ spawn(const char *prog, const char **argv)
 	close(fd);
 	fd = -1;
 
-	// Copy shared library state.
+	// Copy shared library state.a
+//	cprintf("spawn: start to cp_shared_pages...............\n");
 	if ((r = copy_shared_pages(child)) < 0)
 		panic("copy_shared_pages: %e", r);
+//	cprintf("spawn: completed to cp_shared_pages...............\n");
 
-	child_tf.tf_eflags |= FL_IOPL_3;   // devious: see user/faultio.c
+//	child_tf.tf_eflags |= FL_IOPL_3;   // devious: see user/faultio.c
 	if ((r = sys_env_set_trapframe(child, &child_tf)) < 0)
 		panic("sys_env_set_trapframe: %e", r);
 
@@ -174,6 +178,7 @@ spawnl(const char *prog, const char *arg0, ...)
 	for(i=0;i<argc;i++)
 		argv[i+1] = va_arg(vl, const char *);
 	va_end(vl);
+//	cprintf("spawnl: start to spawn...................\n");
 	return spawn(prog, argv);
 }
 
@@ -304,6 +309,24 @@ static int
 copy_shared_pages(envid_t child)
 {
 	// LAB 5: Your code here.
+	uintptr_t va;
+	uintptr_t _va;
+	int perm;
+	int r;
+	for(va=0; va<UXSTACKTOP-PGSIZE; va+=PTSIZE) {
+		if(uvpd[PDX(va)] & PTE_P) {
+			for(_va=va; _va<va+PTSIZE; _va+=PGSIZE) {
+				perm = uvpt[PGNUM(_va)] & PTE_SYSCALL;
+				if((perm & PTE_P) && (perm & PTE_SHARE)) {
+//					cprintf("cp_shared_pages: va: %x _va: %x perm: %x\n",va,_va,perm);
+					if ((r = sys_page_map(0, (void*)_va, child, (void*)_va, perm)) < 0)
+						panic("copy_shared_pages: sys_page_map data: %e", r);
+//					cprintf("cp_shared_pages:_va: %x mapped\n",_va);		
+				}
+			}
+		}
+
+	}
 	return 0;
 }
 

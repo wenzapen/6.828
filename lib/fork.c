@@ -67,7 +67,11 @@ duppage(envid_t envid, unsigned pn)
 
 	// LAB 4: Your code here.
 //	cprintf("duppage: dstenvid: %x pn: %x va: %x\n",envid, pn, pn*PGSIZE);
-	if(uvpt[pn] & (PTE_W | PTE_COW))
+	if((uvpt[pn] & PTE_SHARE) && (uvpt[pn] & PTE_COW))
+		panic("duppage: PTE_SHARE && PTE_COW\n");
+	if(uvpt[pn] & PTE_SHARE)
+		perm = uvpt[pn] & PTE_SYSCALL;
+	else if(uvpt[pn] & (PTE_W | PTE_COW))
 		perm |= PTE_COW;
 //	cprintf("duppage: perm: %x \n", perm);
 	if((r = sys_page_map(0, (void*)(pn*PGSIZE), envid, (void*)(pn*PGSIZE), perm)) < 0)

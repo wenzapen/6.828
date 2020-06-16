@@ -35,7 +35,7 @@ bc_pgfault(struct UTrapframe *utf)
 	void *_addr = addr - (uint32_t)addr % PGSIZE;
 	uint32_t sectno = blockno * (BLKSIZE / SECTSIZE);
 
-	cprintf("bc_pgfault: addr: %x _addr: %x blockno: %d sectno: %d\n",addr,_addr,blockno,sectno);
+//	cprintf("bc_pgfault: addr: %x _addr: %x blockno: %d sectno: %d\n",addr,_addr,blockno,sectno);
 
 	// Check that the fault was within the block cache region
 	if (addr < (void*)DISKMAP || addr >= (void*)(DISKMAP + DISKSIZE))

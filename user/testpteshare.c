@@ -12,9 +12,9 @@ umain(int argc, char **argv)
 {
 	int r;
 
-	if (argc != 0)
+	if (argc != 0) {
 		childofspawn();
-
+	}
 	if ((r = sys_page_alloc(0, VA, PTE_P|PTE_W|PTE_U|PTE_SHARE)) < 0)
 		panic("sys_page_alloc: %e", r);
 
@@ -32,7 +32,7 @@ umain(int argc, char **argv)
 	if ((r = spawnl("/testpteshare", "testpteshare", "arg", 0)) < 0)
 		panic("spawn: %e", r);
 	wait(r);
-	cprintf("spawn handles PTE_SHARE %s\n", strcmp(VA, msg2) == 0 ? "right" : "wrong");
+	cprintf("spawn handles PTE_SHARE %s\n",strcmp(VA, msg2) == 0 ? "right" : "wrong");
 
 	breakpoint();
 }
