@@ -12,6 +12,7 @@
 #include <kern/console.h>
 #include <kern/sched.h>
 #include <kern/time.h>
+#include <kern/e1000.h>
 
 // Print a string to the system console.
 // The string is exactly 'len' characters long.
@@ -364,8 +365,10 @@ sys_ipc_try_send(envid_t envid, uint32_t value, void *srcva, unsigned perm)
 	pte_t *_pte;
 	struct PageInfo *p;
 //	cprintf("sys_ipc_try_send: dst_envid: %x value: %x srvva: %x perm: %x \n",envid,value,srcva,perm);
-	if((r=envid2env(envid, &dst_env,0)) < 0)
+	if((r=envid2env(envid, &dst_env,0)) < 0) {
+		cprintf("envidenv: error: %e\n",r);
        		return r;	
+	}
 //	cprintf("sys_ipc_try_send: start: dst_env: %x ipc_recving: %d env_status: %d eflags: %x\n",dst_env->env_id,dst_env->env_ipc_recving, dst_env->env_status,dst_env->env_tf.tf_eflags);
 	if(!dst_env->env_ipc_recving) {
 //		cprintf("sys_ipc_try_send: dst_env is not ready to receive: ipc_recving: %x status: %x\n", dst_env->env_ipc_recving, dst_env->env_status);
@@ -434,7 +437,16 @@ static int
 sys_time_msec(void)
 {
 	// LAB 6: Your code here.
-	panic("sys_time_msec not implemented");
+	return time_msec();
+//	panic("sys_time_msec not implemented");
+}
+
+// Return the current time.
+static int
+sys_net_tx(void *packet, size_t len)
+{
+	// LAB 6: Your code here.
+	return e1000_transmit(packet, len);
 }
 
 // Dispatches to the correct kernel function, passing the arguments.
@@ -493,6 +505,13 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 		case SYS_ipc_recv: {
 			return sys_ipc_recv((void*)a1);
 		}
+		case SYS_time_msec: {
+			return sys_time_msec();
+		}	
+		case SYS_net_tx: {
+			return sys_net_tx((void *)a1, (size_t)a2);
+		}	
+
 		default:
 			return -E_INVAL;
 	}

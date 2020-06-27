@@ -2,7 +2,6 @@
 #include <inc/memlayout.h>
 
 pte_t entry_pgtable[NPTENTRIES];
-pte_t entry_pgtable4[NPTENTRIES];
 
 // The entry.S page directory maps the first 4MB of physical memory
 // starting at virtual address KERNBASE (that is, it maps virtual

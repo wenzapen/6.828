@@ -156,6 +156,7 @@ boot_alloc(uint32_t n)
 	// to any kernel code or global variables.
 	if (!nextfree) {
 		extern char end[];
+		cprintf("boot_alloc: end: %x\n", end);
 		nextfree = ROUNDUP((char *) end, PGSIZE);
 	}
 
@@ -168,7 +169,9 @@ boot_alloc(uint32_t n)
 		return nextfree;
 	result = nextfree;
 	nextfree = ROUNDUP(nextfree+n, PGSIZE);
-	if(((uint32_t)nextfree-KERNBASE)>0x400000)
+	cprintf("boot_alloc: try to allocate %x Bytes\n",n);
+	cprintf("boot_alloc: nextfree: %x\n", nextfree);
+	if(((uint32_t)nextfree-KERNBASE)>0x800000)
 		panic("Out of memory");
 	return result;
 		
@@ -196,7 +199,8 @@ mem_init(void)
 //	panic("mem_init: This function is not finished\n");
 
 	//////////////////////////////////////////////////////////////////////
-	// create initial page directory.
+	// create initial page directory
+	cprintf("mem_init: allocate page for kern_pgdir\n");
 	kern_pgdir = (pde_t *) boot_alloc(PGSIZE);
 	memset(kern_pgdir, 0, PGSIZE);
 
@@ -216,12 +220,14 @@ mem_init(void)
 	// array.  'npages' is the number of physical pages in memory.  Use memset
 	// to initialize all fields of each struct PageInfo to 0.
 	// Your code goes here:
+	cprintf("mem_init: allocate page for pages\n");
 	pages = (struct PageInfo *)boot_alloc(sizeof(struct PageInfo) * npages);
 	memset(pages, 0, sizeof(struct PageInfo) * npages); 
 
 	//////////////////////////////////////////////////////////////////////
 	// Make 'envs' point to an array of size 'NENV' of 'struct Env'.
-	// LAB 3: Your code here.
+	// LAB 3: Your code herre.
+	cprintf("mem_init: allocate page for envs\n");
 	envs = (struct Env *)boot_alloc(sizeof(struct Env) * NENV);
 	memset(envs, 0, sizeof(struct Env) * NENV); 
 
@@ -614,8 +620,11 @@ page_insert(pde_t *pgdir, struct PageInfo *pp, void *va, int perm)
 	*_pte = _pa | perm | PTE_P;
 //	cprintf("page PP %d ref %d next %x\n", pp-pages, pp->pp_ref, (uint32_t)pp->pp_link);
 	struct PageInfo *_p = page_free_list;
-	while(_p != pp && _p != NULL)
+//	cprintf("page_insert: _p: %x pp: %x\n",_p, pp);
+	while(_p != pp && _p != NULL) {
+//		cprintf("page_insert: _p: %x pp: %x\n",_p, pp);
 		_p = _p->pp_link;
+	}
 	if(_p) { 
 // if pp is in free list, remove it from free list
 		if(pp == page_free_list) {

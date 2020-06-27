@@ -129,8 +129,8 @@ fork(void)
 		panic("sys_env_set_pgfault_upcall: %e\n",r);
 	if((r = sys_env_set_status(envid, ENV_RUNNABLE)) < 0)
 		panic("sys_env_set_status: %e\n",r);
+	cprintf("parent: %x child: %x child status: %d\n",thisenv->env_id, envid, envs[ENVX(envid)].env_status);
 	return envid;	
-
 //	panic("fork not implemented");
 }
 

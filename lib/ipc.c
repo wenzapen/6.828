@@ -60,7 +60,7 @@ ipc_send(envid_t to_env, uint32_t val, void *pg, int perm)
 	int r;
 	if(!pg)
 		pg = (void*)UTOP;
-//	cprintf("ipc_send: dst_env: %x val: %x srcva: %x perm: %x\n",to_env, val, pg, perm);
+	cprintf("ipc_send: thisenv: %x dst_env: %x val: %x srcva: %x perm: %x\n",thisenv->env_id,to_env, val, pg, perm);
 	while(1) {
 		r = sys_ipc_try_send(to_env, val, pg, perm);
 		if(r==0)

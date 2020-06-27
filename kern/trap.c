@@ -264,6 +264,8 @@ trap_dispatch(struct Trapframe *tf)
 	//	print_trapframe(tf);
 //		cprintf("envs[0]: status: %x envs[1]: status: %x\n",envs[0].env_status,envs[1].env_status);
 		lapic_eoi();
+		if(cpunum() == 0)
+			time_tick();
 		sched_yield();
 		return;
 	}

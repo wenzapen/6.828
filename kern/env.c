@@ -90,6 +90,7 @@ envid2env(envid_t envid, struct Env **env_store, bool checkperm)
 	// that used the same slot in the envs[] array).
 	e = &envs[ENVX(envid)];
 	if (e->env_status == ENV_FREE || e->env_id != envid) {
+		cprintf("envid2env: envid: %x e->status: %d e->env_id: %x\n", envid, e->env_status, e->env_id);
 		*env_store = 0;
 		return -E_BAD_ENV;
 	}
@@ -425,9 +426,9 @@ env_create(uint8_t *binary, enum EnvType type)
 	load_icode(e, binary);
 	e->env_type = type;
 	if(type == ENV_TYPE_FS) {
-		cprintf("env: %x is ENV_TYPE_FS\n", e->env_id);
 		e->env_tf.tf_eflags |= FL_IOPL_3;
 	}
+	cprintf("env: %x is %d\n", e->env_id, e->env_type);
 }
 
 //
@@ -481,6 +482,7 @@ env_free(struct Env *e)
 	e->env_status = ENV_FREE;
 	e->env_link = env_free_list;
 	env_free_list = e;
+	cprintf("env_free: curenv: %x envid: %x freed\n",curenv->env_id,e->env_id);
 }
 
 //

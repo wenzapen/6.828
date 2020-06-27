@@ -1,0 +1,116 @@
+Binary file ./obj/lib/liblwip.a matches
+Binary file ./obj/kern/kernel.img matches
+./obj/kern/kernel.asm:4910:	// Look up the Env structure via the index part of the envid,
+./obj/kern/kernel.asm:10374:lapicw(int index, int value)
+./obj/kern/kernel.asm:10376:	lapic[index] = value;
+Binary file ./obj/kern/lapic.o matches
+Binary file ./obj/kern/kernel matches
+./obj/net/ns.asm:1844:  LWIP_ASSERT("invalid socket index", (newsock >= 0) && (newsock < NUM_SOCKETS));
+./obj/net/ns.asm:1920:  LWIP_ASSERT("invalid socket index", (newsock >= 0) && (newsock < NUM_SOCKETS));
+./obj/net/ns.asm:18026: * @return table index if found, -1 otherwise
+Binary file ./obj/net/ns matches
+Binary file ./obj/net/lwip/api/sockets.o matches
+Binary file ./obj/fs/fs.img matches
+Binary file ./obj/fs/clean-fs.img matches
+./lib/file.c:53:// 	The file descriptor index on success
+./lib/file.c:69:	// Return the file descriptor index.
+./lib/fd.c:13:// Return the 'struct Fd*' for file descriptor index i
+./lib/fd.c:15:// Return the file data page for file descriptor index i
+./lib/fprintf.c:10:	int idx;	// current buffer index
+./lib/printf.c:20:	int idx;	// current buffer index
+./inc/stab.h:44:	uint32_t n_strx;	// index into string table of name
+./inc/env.h:20:// The environment index ENVX(eid) equals the environment's index in the
+./inc/env.h:22:// created at different times, but share the same environment index.
+./inc/mmu.h:32:// page directory index
+./inc/mmu.h:35:// page table index
+./kern/cpu.h:22:	uint8_t cpu_id;                 // Local APIC ID; index into cpus[] below
+./kern/lapic.c:49:lapicw(int index, int value)
+./kern/lapic.c:51:	lapic[index] = value;
+./kern/env.c:86:	// Look up the Env structure via the index part of the envid,
+./net/lwip/api/sockets.c:100:  /** socket index for which to change options */
+./net/lwip/api/sockets.c:126:  * by using -err as an index */
+./net/lwip/api/sockets.c:180: * Map a externally used socket index to the internal socket representation.
+./net/lwip/api/sockets.c:182: * @param s externally used socket index
+./net/lwip/api/sockets.c:211: * @return the index of the new socket; -1 on error
+./net/lwip/api/sockets.c:293:  LWIP_ASSERT("invalid socket index", (newsock >= 0) && (newsock < NUM_SOCKETS));
+./net/lwip/api/sockets.c:793: * @param maxfdp1 the highest socket index in the sets
+./net/lwip/netif/etharp.c:182:      /* remove from SNMP ARP index tree */
+./net/lwip/netif/etharp.c:224: * @return The ARP entry index that matched or is created, ERR_MEM if no
+./net/lwip/netif/etharp.c:500:  /* insert in SNMP ARP index tree */
+./net/lwip/netif/etharp.c:535: * using interface and IP address index.
+./net/lwip/netif/etharp.c:538: * @param netif points to interface index
+./net/lwip/netif/etharp.c:539: * @param ipaddr points to the (network order) IP address index
+./net/lwip/netif/etharp.c:542: * @return table index if found, -1 otherwise
+./net/lwip/netif/etharp.c:879:  s8_t i; /* ARP entry index */
+./net/lwip/netif/etharp.c:1037:  u8_t k; /* ARP entry index */
+./net/lwip/netif/ppp/vj.c:487:     * Make sure the state index is in range, then grab the state.
+./net/lwip/netif/ppp/vj.c:488:     * If we have a good state index, clear the 'discard' flag. 
+./net/lwip/netif/ppp/vj.c:499:     * this packet has an implicit state index.  If we've
+./net/lwip/netif/ppp/vj.c:501:     * explicit state index, we have to toss the packet. 
+./net/lwip/core/mem.c:153:  /** index (-> ram[next]) of the next struct */
+./net/lwip/core/mem.c:155:  /** index (-> ram[next]) of the next struct */
+./net/lwip/core/dns.c:249: * @param numdns the index of the DNS server to set must be < DNS_MAX_SERVERS
+./net/lwip/core/dns.c:264: * @param numdns the index of the DNS server
+./net/lwip/core/dns.c:395: * @param numdns index of the DNS server in the dns_servers table
+./net/lwip/core/dns.c:397: * @param id index of the hostname in dns_table, used as transaction ID in the
+./net/lwip/core/dns.c:475: * @param i index of the dns_table entry to check
+./net/lwip/core/dns.c:482:  LWIP_ASSERT("array index out of bounds", i < DNS_TABLE_SIZE);
+./net/lwip/core/stats.c:100:stats_display_memp(struct stats_mem *mem, int index)
+./net/lwip/core/stats.c:106:  if(index < MEMP_MAX) {
+./net/lwip/core/stats.c:107:    stats_display_mem(mem, memp_names[index]);
+./net/lwip/core/snmp/mib_structs.c:493:               inspect remaining instance number / table index */
+./net/lwip/core/snmp/msg_in.c:1097:    /* can't decode or no integer (error-index) */
+./net/lwip/core/snmp/mib2.c:165:/** index root node for udpTable */
+./net/lwip/core/snmp/mib2.c:233:/** index root node for tcpConnTable */
+./net/lwip/core/snmp/mib2.c:344:/** index root node for ipNetToMediaTable */
+./net/lwip/core/snmp/mib2.c:385:/** index root node for ipRouteTable */
+./net/lwip/core/snmp/mib2.c:431:/** index root node for ipAddrTable */
+./net/lwip/core/snmp/mib2.c:510:/** index root node for atTable */
+./net/lwip/core/snmp/mib2.c:566:/** index root node for ifTable */
+./net/lwip/core/snmp/mib2.c:1083: * into arp table index trees (both atTable and ipNetToMediaTable).
+./net/lwip/core/snmp/mib2.c:1157: * from arp table index trees.
+./net/lwip/core/snmp/mib2.c:1208:    /* delete marked index nodes */
+./net/lwip/core/snmp/mib2.c:1316: * into index tree.
+./net/lwip/core/snmp/mib2.c:1372: * from index tree.
+./net/lwip/core/snmp/mib2.c:1414:  /* delete marked index nodes */
+./net/lwip/core/snmp/mib2.c:1435: * into index tree.
+./net/lwip/core/snmp/mib2.c:1512: * from index tree.
+./net/lwip/core/snmp/mib2.c:1572:    /* delete marked index nodes */
+./net/lwip/core/snmp/mib2.c:1790: * into index tree.
+./net/lwip/core/snmp/mib2.c:1844: * from index tree.
+./net/lwip/core/snmp/mib2.c:1903:    /* delete marked index nodes */
+./net/lwip/core/snmp/mib2.c:2124:  /* return to object name, adding index depth (1) */
+./net/lwip/core/snmp/mib2.c:2298: * @param ident points to objectname.index
+./net/lwip/core/snmp/mib2.c:2304:  /* return to object name, adding index depth (1) */
+./net/lwip/core/snmp/mib2.c:2347: * @param ident points to objectname.index
+./net/lwip/core/snmp/mib2.c:2355:  /* return to object name, adding index depth (1) */
+./net/lwip/core/snmp/mib2.c:2674:  /* return to object name, adding index depth (5) */
+./net/lwip/core/snmp/mib2.c:2769:  /* return to object name, adding index depth (1) */
+./net/lwip/core/snmp/mib2.c:3018:  /* return to object name, adding index depth (4) */
+./net/lwip/core/snmp/mib2.c:3141:  /* return to object name, adding index depth (4) */
+./net/lwip/core/snmp/mib2.c:3354:  /* return to object name, adding index depth (5) */
+./net/lwip/core/snmp/mib2.c:3458:  /* return to object name, adding index depth (1) */
+./net/lwip/core/snmp/mib2.c:3577:  /* return to object name, adding index depth (1) */
+./net/lwip/core/snmp/mib2.c:3708:  /* return to object name, adding index depth (10) */
+./net/lwip/core/snmp/mib2.c:3780:  /* return to object name, adding index depth (1) */
+./net/lwip/core/snmp/mib2.c:3829:  /* return to object name, adding index depth (5) */
+./net/lwip/core/snmp/mib2.c:3910:  /* return to object name, adding index depth (1) */
+./net/lwip/core/snmp/msg_out.c:77: * @param dst_idx index in 0 .. SNMP_TRAP_DESTINATIONS-1
+./net/lwip/core/snmp/msg_out.c:91: * @param dst_idx index in 0 .. SNMP_TRAP_DESTINATIONS-1
+./net/lwip/core/snmp/msg_out.c:110: * and provide error-status and index (except for tooBig errors) ...
+./net/lwip/include/lwip/snmp_structs.h:117:/** derived node for scalars .0 index */
+./net/lwip/include/lwip/stats.h:268:void stats_display_memp(struct stats_mem *mem, int index);
+./net/lwip/include/lwip/stats.h:275:#define stats_display_memp(mem, index)
+./net/lwip/include/lwip/snmp_msg.h:121:  /* encoding error-index length length */
+./net/lwip/include/lwip/snmp_msg.h:136:  /* encoding error-index length */
+./net/lwip/include/lwip/snmp_msg.h:229:  /* error index */
+./net/lwip/include/lwip/snmp_msg.h:242:  /* index into input variable binding list */
+Binary file ./.git/objects/pack/pack-f44e4cbdf5a8812ed153d021f77741e19feef404.pack matches
+./.git/hooks/pre-commit.sample:49:exec git diff-index --check --cached $against --
+./.git/hooks/fsmonitor-watchman.sample:55:	# recency index to select candidate nodes and "fields" to limit the
+Binary file ./.git/index matches
+./fs/Makefrag:16:			fs/index.html
+./grade-lab6:248:mk_test_httpd("/index.html", 200, open("fs/index.html").read())
+./GNUmakefile:158:QEMUOPTS = -drive file=$(OBJDIR)/kern/kernel.img,index=0,media=disk,format=raw -serial mon:stdio -gdb tcp::$(GDBPORT)
+./GNUmakefile:162:QEMUOPTS += -drive file=$(OBJDIR)/fs/fs.img,index=1,media=disk,format=raw
+./GNUmakefile:266:	@if ! git diff-files --quiet || ! git diff-index --quiet --cached HEAD; then \
