@@ -18,8 +18,8 @@ enum {
 	SYS_ipc_try_send,
 	SYS_ipc_recv,
 	SYS_time_msec,
-	SYS_net_tx,
-	SYS_net_rx,
+	SYS_nic_try_send,
+	SYS_nic_recv,
 	NSYSCALLS
 };
 

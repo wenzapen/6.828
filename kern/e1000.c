@@ -37,7 +37,8 @@ static void e1000_tx_init() {
 	assert((sizeof(tx_descs)) % 128 == 0);
 
 	for(int i=0; i<TX_DESC_LEN; i++) {
-		tx_descs[i].addr = (uint32_t)&tx_bufs[i];
+		cprintf("e1000_tx_init: &txbufs[%d]: %x pa: %x\n",i, &tx_bufs[i], PADDR(&tx_bufs[i])); 
+		tx_descs[i].addr = PADDR(&tx_bufs[i]);
 	}
 	E1000_REG(E1000_TDBAL) = PADDR(&tx_descs[0]);
 	E1000_REG(E1000_TDBAH) = 0;
@@ -60,11 +61,12 @@ int e1000_transmit(void *packet, size_t len) {
 		cprintf("e1000_transmit: transmit buffer is full\n");
 		return -1;
 	}
-	memcpy((void *)((uint32_t)tx_descs[TDT].addr), packet, len);
-	cprintf("e1000_transmit: tx_descs[%d]: %s\n",TDT,(char *)((uint32_t)tx_descs[TDT].addr));
-	tx_descs[TDT].cmd |= E1000_TXD_CMD_RS;
+	memcpy(tx_bufs[TDT], packet, len);
+	cprintf("e1000_transmit: tx_descs[%d]: %s\n",TDT,(char *)(tx_bufs[TDT]));
+	tx_descs[TDT].cmd |= E1000_TXD_CMD_RS | E1000_TXD_CMD_EOP;
 	tx_descs[TDT].status &= ~E1000_TXD_STAT_DD;
-//	cprintf("e1000_transmit: TDT: %d RS: %d DD: %d\n",TDT, (tx_descs[TDT].cmd & E1000_TXD_CMD_RS), (tx_descs[TDT].status & E1000_TXD_STAT_DD));
+	tx_descs[TDT].length = len;
+	cprintf("e1000_transmit: tx_descs[%d]: cmd:  %d status: %d length: %d\n",TDT, tx_descs[TDT].cmd, tx_descs[TDT].status, tx_descs[TDT].length);
 	TDT = (TDT+1) % TDLEN;
 	return 0;
 }

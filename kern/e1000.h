@@ -46,6 +46,7 @@ struct tx_desc {
 
 #define E1000_TXD_STAT_DD    0x01
 #define E1000_TXD_CMD_RS     0x08
+#define E1000_TXD_CMD_EOP     0x01
 
 int pci_e1000_attach(struct pci_func *pcif);
 int e1000_transmit(void *packet, size_t len);

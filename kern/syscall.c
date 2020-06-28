@@ -443,7 +443,7 @@ sys_time_msec(void)
 
 // Return the current time.
 static int
-sys_net_tx(void *packet, size_t len)
+sys_nic_try_send(void *packet, size_t len)
 {
 	// LAB 6: Your code here.
 	return e1000_transmit(packet, len);
@@ -508,8 +508,8 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 		case SYS_time_msec: {
 			return sys_time_msec();
 		}	
-		case SYS_net_tx: {
-			return sys_net_tx((void *)a1, (size_t)a2);
+		case SYS_nic_try_send: {
+			return sys_nic_try_send((void *)a1, (size_t)a2);
 		}	
 
 		default:

@@ -124,8 +124,8 @@ sys_time_msec(void)
 }
 
 int
-sys_net_tx(void *packet, size_t len)
+sys_nic_try_send(void *packet, size_t len)
 {
-	return syscall(SYS_net_tx, 0, (uint32_t)packet, len, 0, 0, 0);
+	return syscall(SYS_nic_try_send, 0, (uint32_t)packet, len, 0, 0, 0);
 }
 

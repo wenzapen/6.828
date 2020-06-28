@@ -24,7 +24,7 @@ output(envid_t ns_envid)
 		}
 		pkt = (struct jif_pkt *)&nsipcbuf;
 		cprintf("output: pkt->jp_data: %s\n",pkt->jp_data);
-		sys_net_tx((void *)pkt->jp_data, (size_t)pkt->jp_len); 
+		sys_nic_try_send((void *)pkt->jp_data, (size_t)pkt->jp_len); 
 
 	}
 }
