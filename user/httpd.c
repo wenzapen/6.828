@@ -225,6 +225,7 @@ send_file(struct http_request *req)
 	int r;
 	off_t file_size = -1;
 	int fd;
+	struct Stat statbuf;
 
 	// open the requested url for reading
 	// if the file does not exist, send a 404 error using send_error
@@ -233,8 +234,20 @@ send_file(struct http_request *req)
 
 	// LAB 6: Your code here.
 //	panic("send_file not implemented");
-	if (( fd = open(req->url, O_RDONLY)) < 0)
-		return send_error(req, 404);
+//	cprintf("send_file: %s\n", req->url);
+	
+	if (( r = stat(req->url, &statbuf)) < 0) {
+		send_error(req, 404);
+		return r;
+	}
+	if(statbuf.st_isdir)  {
+		send_error(req, 404);
+		return r;
+	}
+	if (( fd = open(req->url, O_RDONLY)) < 0) {
+		send_error(req, 404);
+		goto end;
+	}
 
 	if ((r = send_header(req, 200)) < 0)
 		goto end;
