@@ -441,12 +441,19 @@ sys_time_msec(void)
 //	panic("sys_time_msec not implemented");
 }
 
-// Return the current time.
 static int
 sys_nic_try_send(void *packet, size_t len)
 {
 	// LAB 6: Your code here.
 	return e1000_transmit(packet, len);
+}
+
+//return the size of received packet on success	
+static int
+sys_nic_recv(void *packet)
+{
+	// LAB 6: Your code here.
+	return e1000_receive(packet);
 }
 
 // Dispatches to the correct kernel function, passing the arguments.
@@ -510,6 +517,9 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 		}	
 		case SYS_nic_try_send: {
 			return sys_nic_try_send((void *)a1, (size_t)a2);
+		}	
+		case SYS_nic_recv: {
+			return sys_nic_recv((void *)a1);
 		}	
 
 		default:

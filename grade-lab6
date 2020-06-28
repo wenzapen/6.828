@@ -220,7 +220,7 @@ def test_httpd():
     pass
 
 def mk_test_httpd(url, expect_code, expect_data):
-    fullurl = "http://localhost:%d%s" % (http_port, url)
+    fullurl = "http://localhost:%d%s/index.html" % (http_port, url)
     def test_httpd_test():
         def ready(line):
             try:

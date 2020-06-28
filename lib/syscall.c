@@ -128,4 +128,9 @@ sys_nic_try_send(void *packet, size_t len)
 {
 	return syscall(SYS_nic_try_send, 0, (uint32_t)packet, len, 0, 0, 0);
 }
+int
+sys_nic_recv(void *packet)
+{
+	return syscall(SYS_nic_recv, 0, (uint32_t)packet, 0, 0, 0, 0);
+}
 
